@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sql.ehr.dao.ApplyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.sql.ehr.entity.ApplyEntity" id="applyMap">
+        <result property="ano" column="ano"/>
+        <result property="atitilename" column="atitilename"/>
+        <result property="aobtaintime" column="aobtaintime"/>
+        <result property="aevaluateinf" column="aevaluateinf"/>
+        <result property="aresult" column="aresult"/>
+        <result property="ayear" column="ayear"/>
+        <result property="aeno" column="aeno"/>
+        <result property="atno" column="atno"/>
+    </resultMap>
+
+
+</mapper>

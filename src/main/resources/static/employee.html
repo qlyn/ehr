@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/layui.css">
+</head>
+<body>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+</body>
+<script src="js/layui.all.js"></script>
+<script>
+    layui.use('table', function(){
+    var table = layui.table;
+    /*
+    * unresize:是否列宽是否能被拖拽
+    * sort：是否排序
+    * edit：是否编辑
+    * totalRowText：该列最后一行显示文本
+    * totalRow：自动计算当前显示列的总和
+    *
+    * */
+    table.render({
+        elem: '#test'
+        ,url:'http://localhost:8081/ehr/employee/layuilist.json'
+        ,toolbar: true
+        ,title: '用户数据表'
+        ,totalRow: true
+        ,cols: [[
+            {field:'eno', title:'员工编号', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计行'}
+            ,{field:'ename', title:'姓名', width:120, edit: 'text'}
+            ,{field:'egender', title:'性别', width:150, edit: 'text'}
+            ,{field:'ebirthday', title:'出生日期', width:100, sort: true, totalRow: true}
+            ,{field:'ephone', title:'联系电话', width:80, edit: 'text', sort: true}
+            ,{field:'eemail', title:'邮箱地址', width:100, sort: true, totalRow: true}
+            ,{field:'eeducation', title:'学历'}
+            ,{field:'edno', title:'部门号', width:100}
+            ,{field:'epno', title:'职务', width:120}
+            ,{field:'eentytime', title:'入职时间', width:120}
+            ,{field:'estatus', title:'人员状态', width:120}
+            ,{field:'erole', title:'角色', width:120}
+            ,{field:'eremarks', title:'备注', width:120}
+            ,{field:'eaccount', title:'账户', width:120}
+            ,{field:'epassword', title:'密码', width:120}
+        ]]
+        ,page: true
+        ,response: {
+            statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+        }
+        ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+            return {
+                "code": res.code, //解析接口状态
+                "msg": res.msg, //解析提示文本
+                "count": res.data.totalCount, //解析数据长度
+                "data": res.data.list //解析数据列表
+            };
+        }
+    });
+});
+</script>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sql.ehr.dao.ArchivesDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.sql.ehr.entity.ArchivesEntity" id="archivesMap">
+        <result property="ano" column="ano"/>
+        <result property="aeno" column="aeno"/>
+        <result property="aname" column="aname"/>
+        <result property="acontent" column="acontent"/>
+        <result property="aremarks" column="aremarks"/>
+    </resultMap>
+
+
+</mapper>
