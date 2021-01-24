@@ -32,11 +32,9 @@ public class PostController {
     private PostService postService;
 
     @GetMapping("/getAll")
-    @Cacheable(cacheNames = "PostController_getAll",sync=true)
     public String getAll(@RequestParam("id")String id) {
         QueryWrapper queryWrapper=new QueryWrapper();
         queryWrapper.in("pdno",id);
-
         List<PostEntity> list=postService.list(queryWrapper);
         return JSONObject.toJSONString(list);
     }

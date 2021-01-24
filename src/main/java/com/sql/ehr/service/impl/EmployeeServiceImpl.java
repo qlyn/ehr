@@ -42,6 +42,22 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeDao, EmployeeEntity
         }
         return new PageVo(hashMapList,params);
     }
+
+    /**
+     * 条件查询
+     * @param map
+     * @return
+     */
+    public PageVo selectAllByCondition(HashMap<String,Object> map){
+        List<GeneralEmployee> list=employeeDao.selectAllByCondition(map);
+        List<HashMap<String,Object>> hashMapList=new LinkedList<HashMap<String, Object>>();
+        for (GeneralEmployee employee: list) {
+            HashMap<String,Object> hashMap= (HashMap<String, Object>) HashMapBeanTools.objToHash(employee);
+            hashMapList.add(hashMap);
+        }
+        return new PageVo(hashMapList,map);
+    }
+
     /**
      * 导出查询，删除不必要的记录并返回
      * @param map
@@ -100,21 +116,6 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeDao, EmployeeEntity
             hashMapList.add(hashMap);
         }
         return hashMapList;
-    }
-
-    /**
-     * 条件查询
-     * @param map
-     * @return
-     */
-    public PageVo selectAllByCondition(HashMap<String,Object> map){
-        List<GeneralEmployee> list=employeeDao.selectAllByCondition(map);
-        List<HashMap<String,Object>> hashMapList=new LinkedList<HashMap<String, Object>>();
-        for (GeneralEmployee employee: list) {
-            HashMap<String,Object> hashMap= (HashMap<String, Object>) HashMapBeanTools.objToHash(employee);
-            hashMapList.add(hashMap);
-        }
-        return new PageVo(hashMapList,map);
     }
 
     /**

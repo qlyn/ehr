@@ -39,7 +39,6 @@ public class DepartmentController {
 
 
     @GetMapping("/getAll")
-    @Cacheable(cacheNames = "DepartmentController_getAll",sync=true)
     public String getAll() {
         List<DepartmentEntity> list=departmentService.list();
         return JSONObject.toJSONString(list);

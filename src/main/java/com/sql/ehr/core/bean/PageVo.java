@@ -85,11 +85,12 @@ public class PageVo implements Serializable {
 			}
 			//currPage==totalPage的情况只会是到了最后一页
 			int remain = (currPage == totalPage) ? (totalCount % pageSize) : pageSize;
-			if(remain!=0)
-				this.list = list.subList((currPage - 1) * pageSize, (currPage - 1) * pageSize + remain);
-			else
-				//此情况为到了最后一页，刚好最后一页数据是填满的情况(如第一页十条，第二页后十条等)，remain此时为0，需要在此基础上加上pageSize条数据
-				this.list=list.subList((currPage - 1) * pageSize,(currPage - 1) * pageSize +remain+pageSize);
+			if(currPage == totalPage && (totalCount % pageSize)==0){
+				//此情况为到了最后一页，刚好最后一页数据是填满的情况(如总页数10的第一页十条，总页数20的第二页后十条等)，
+				// remain此时为0，需要重置为pageSize的值
+				remain=pageSize;
+			}
+			this.list = list.subList((currPage - 1) * pageSize, (currPage - 1) * pageSize + remain);
 		}else {	//查不到list数据的分页
 			this.totalCount=0;
 			this.totalPage=0;
@@ -115,11 +116,12 @@ public class PageVo implements Serializable {
 				this.totalPage = (totalCount / pageSize) + 1;
 			}
 			int remain = (currPage == totalPage) ? (totalCount % pageSize) : pageSize;
-			if(remain==0)
-				this.list = list.subList((currPage - 1) * pageSize, (currPage - 1) * pageSize + remain);
-			else
-				//此情况为到了最后一页，刚好最后一页数据是填满的情况(如第一页十条，第二页后十条等)，remain此时为0，需要在此基础上加上pageSize条数据
-				this.list=list.subList((currPage - 1) * pageSize,(currPage - 1) * pageSize +remain+pageSize);
+			if(currPage == totalPage && (totalCount % pageSize)==0){
+				//此情况为到了最后一页，刚好最后一页数据是填满的情况(如总页数10的第一页十条，总页数20的第二页后十条等)，
+				// remain此时为0，需要重置为pageSize的值
+				remain=pageSize;
+			}
+			this.list = list.subList((currPage - 1) * pageSize, (currPage - 1) * pageSize + remain);
 		}else {	//查不到list数据的分页
 			this.totalCount=0;
 			this.totalPage=0;
@@ -145,11 +147,12 @@ public class PageVo implements Serializable {
 			this.totalPage = (totalCount/pageSize)+1;
 		}
 		int remain=(currPage==totalPage)?(totalCount%pageSize):pageSize;
-		if(remain==0)
-			this.list = list.subList((currPage-1)*pageSize,(currPage-1)*pageSize+remain);
-		else
-			//此情况为到了最后一页，刚好最后一页数据是填满的情况(如第一页十条，第二页后十条等)，remain此时为0，需要在此基础上加上pageSize条数据
-			this.list=list.subList((currPage - 1) * pageSize,(currPage - 1) * pageSize +remain+pageSize);
+		if(currPage == totalPage && (totalCount % pageSize)==0){
+			//此情况为到了最后一页，刚好最后一页数据是填满的情况(如总页数10的第一页十条，总页数20的第二页后十条等)，
+			// remain此时为0，需要重置为pageSize的值
+			remain=pageSize;
+		}
+		this.list = list.subList((currPage - 1) * pageSize, (currPage - 1) * pageSize + remain);
 	}
 	/**
 	 * 分页

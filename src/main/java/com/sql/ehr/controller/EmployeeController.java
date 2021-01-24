@@ -2,22 +2,22 @@ package com.sql.ehr.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.nacos.client.naming.net.HttpClient;
 import com.sql.ehr.core.bean.PageVo;
 import com.sql.ehr.core.bean.QueryCondition;
 import com.sql.ehr.core.bean.Resp;
-import com.sql.ehr.core.exception.RRException;
 import com.sql.ehr.entity.EmployeeEntity;
 import com.sql.ehr.service.EmployeeService;
 import com.sql.ehr.util.ExcelTools;
+import com.sql.ehr.util.RedisTools;
 import com.sql.ehr.util.RequestParamsTools;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
@@ -40,18 +40,36 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
 
+    @Autowired
+    RedisTools redisTools;
+
+    @Resource
+    public RedisTemplate redisTemplate;            //操作的key可以是对象
     /**
      * 分页查询（根据传来的分页参数进行的分页查询）
      * @param queryCondition
      * @return
      */
     @GetMapping("/selectAllByPage")
-    @Cacheable(cacheNames = "EmployeeController_selectAllByPage",key="#root.method.name",sync=true) //Redis当前key指定为方法名，否则默认为方法参数，一次请求request会生成一个缓存造成缓存爆炸
+    //@Cacheable(cacheNames = "EmployeeController_selectAllByPage",key="#root.method.name",sync=true)
     public JSONObject selectAllByPage(QueryCondition queryCondition) {
         PageVo page = employeeService.selectAllByPage(queryCondition);
-        return  (JSONObject) JSONObject.toJSON(Resp.customize(page,200,""));
+        //使用当前方法名作为key
+        redisTools.set(Thread.currentThread().getStackTrace()[1].getMethodName(),Resp.customize(page,200,""));
+        return  (JSONObject) redisTools.get("selectAllByPage");
     }
 
+    /**
+     * 条件查询（根据传来的查询条件（如姓名，性别）进行的查询）
+     * @return
+     */
+    @GetMapping("/selectAllByCondition")
+    //@Cacheable(cacheNames = "EmployeeController_selectAllByCondition",key="#root.method.name",sync=true)
+    public JSONObject selectAllByCondition(HttpServletRequest request) {
+        PageVo page = employeeService.selectAllByCondition(RequestParamsTools.RequestParamsToMap(request));
+        redisTools.set(Thread.currentThread().getStackTrace()[1].getMethodName(),Resp.customize(page,200,""));
+        return (JSONObject) redisTools.get(Thread.currentThread().getStackTrace()[1].getMethodName());
+    }
 
     /**
      * 全部文件导出excel
@@ -109,17 +127,6 @@ public class EmployeeController {
     }
 
     /**
-     * 条件查询（根据传来的查询条件（如姓名，性别）进行的查询）
-     * @return
-     */
-    @GetMapping("/selectAllByCondition")
-    @Cacheable(cacheNames = "EmployeeController_selectAllByCondition",key="#root.method.name",sync=true)
-    public JSONObject selectAllByCondition(HttpServletRequest request) {
-        PageVo page = employeeService.selectAllByCondition(RequestParamsTools.RequestParamsToMap(request));
-        return (JSONObject) JSONObject.toJSON(Resp.customize(page,200,""));
-    }
-
-    /**
      * 编辑
      * @param jsonObject
      * @return
@@ -141,6 +148,7 @@ public class EmployeeController {
      * @return
      */
     @DeleteMapping("/batchDelete")
+    @Transactional  //批量处理数据，使用事务管理
     public String batchDelete(@RequestBody JSONArray jsonArray) {
         List<String> list=jsonArray.toJavaList(String.class);
         String str="删除成功";

@@ -1,6 +1,5 @@
 package com.sql.ehr.core.bean;
 
-import com.sql.ehr.util.IPageImp;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -47,7 +46,7 @@ public class Resp<T> implements Serializable {
         return resp;
     }
 
-    public static Resp<PageVo> customize(PageVo page, int i, String s) {
+    public static Resp customize(PageVo page, int i, String s) {
         Resp resp = new Resp(page);
         resp.setCode(i);//操作成功
         resp.setMsg(s);
