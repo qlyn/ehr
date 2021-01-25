@@ -43,20 +43,23 @@ public class EmployeeController {
     @Autowired
     RedisTools redisTools;
 
-    @Resource
-    public RedisTemplate redisTemplate;            //操作的key可以是对象
     /**
      * 分页查询（根据传来的分页参数进行的分页查询）
      * @param queryCondition
      * @return
      */
+    //查询操作：判断key是否存在，如果存在则直接返回数据即不作任何操作；如果不存在则到数据库查询并存入redis，再从redis里取数据
     @GetMapping("/selectAllByPage")
-    //@Cacheable(cacheNames = "EmployeeController_selectAllByPage",key="#root.method.name",sync=true)
     public JSONObject selectAllByPage(QueryCondition queryCondition) {
-        PageVo page = employeeService.selectAllByPage(queryCondition);
-        //使用当前方法名作为key
-        redisTools.set(Thread.currentThread().getStackTrace()[1].getMethodName(),Resp.customize(page,200,""));
-        return  (JSONObject) redisTools.get("selectAllByPage");
+        //使用当前类名：方法名作为key
+        String className=Thread.currentThread().getStackTrace()[1].getClassName();
+        String methodName=Thread.currentThread().getStackTrace()[1].getMethodName();
+        String key=className+":"+methodName;
+        if(!redisTools.redisTemplate.hasKey(key)){
+            PageVo page = employeeService.selectAllByPage(queryCondition);
+            redisTools.set(key,Resp.customize(page,200,""));
+        }
+        return redisTools.get(key);
     }
 
     /**
@@ -64,11 +67,77 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/selectAllByCondition")
-    //@Cacheable(cacheNames = "EmployeeController_selectAllByCondition",key="#root.method.name",sync=true)
-    public JSONObject selectAllByCondition(HttpServletRequest request) {
-        PageVo page = employeeService.selectAllByCondition(RequestParamsTools.RequestParamsToMap(request));
-        redisTools.set(Thread.currentThread().getStackTrace()[1].getMethodName(),Resp.customize(page,200,""));
-        return (JSONObject) redisTools.get(Thread.currentThread().getStackTrace()[1].getMethodName());
+    public Resp<PageVo> selectAllByCondition(HttpServletRequest request) {
+            PageVo page = employeeService.selectAllByCondition(RequestParamsTools.RequestParamsToMap(request));
+        return Resp.customize(page,200,"");
+    }
+
+
+    /**
+     * 编辑
+     * @param jsonObject
+     * @return
+     */
+    //增删改操作：如果redis有缓存，则删除掉该缓存，保持redis和关系型数据库里数据一致性
+    @PutMapping("/edit")
+    public String edit(@RequestBody JSONObject jsonObject){
+        try {
+            EmployeeEntity employee =JSONObject.toJavaObject(jsonObject,EmployeeEntity.class);
+            employeeService.updateById(employee);
+        }catch (Exception e){
+            return "编辑失败";
+        }
+        redisTools.deleteNameSpace(Thread.currentThread().getStackTrace()[1].getClassName());
+        return "编辑成功";
+    }
+
+    /**
+     * 批量删除
+     * @param jsonArray
+     * @return
+     */
+    @DeleteMapping("/batchDelete")
+    @Transactional  //批量处理数据，使用事务管理
+    public String batchDelete(@RequestBody JSONArray jsonArray) {
+        List<String> list=jsonArray.toJavaList(String.class);
+        String str="删除成功";
+        try {
+            employeeService.removeByIds(list);
+        }catch (Exception e){
+            str=e.getMessage();
+        }
+        redisTools.deleteNameSpace(Thread.currentThread().getStackTrace()[1].getClassName());
+        return str;
+    }
+
+    /**
+     * 删除
+     * @param eno
+     * @return
+     */
+    @DeleteMapping("/delete")
+    public String delete(@RequestParam("eno") String eno) {
+        String str="删除成功";
+        try {
+            employeeService.removeById(eno);
+        }catch (Exception e){
+            str=e.getMessage();
+        }
+        redisTools.deleteNameSpace(Thread.currentThread().getStackTrace()[1].getClassName());
+        return str;
+    }
+
+    /**
+     * 添加
+     * @param jsonObject
+     * @return
+     */
+    @PostMapping("/add")
+    public String add(@RequestBody JSONObject jsonObject) {
+        EmployeeEntity employeeEntity=JSONObject.toJavaObject(jsonObject,EmployeeEntity.class);
+        employeeService.save(employeeEntity);
+        redisTools.deleteNameSpace(Thread.currentThread().getStackTrace()[1].getClassName());
+        return "添加成功";
     }
 
     /**
@@ -105,8 +174,6 @@ public class EmployeeController {
     @GetMapping("/exportData")
     @Transactional(isolation= Isolation.REPEATABLE_READ,readOnly = true)
     public void exportData(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("requestMap:"+request.getParameterMap());
-        System.out.println("checkarr:"+request.getParameter("checkarr"));
         PageVo page = employeeService.selectAllByExport(RequestParamsTools.RequestParamsToMap(request));
         LinkedHashMap<String, String> head=new LinkedHashMap<>();
         //设置表头
@@ -125,69 +192,6 @@ public class EmployeeController {
         head.put("eremarks","备注");
         String path= ExcelTools.mapToExcel(head, (List<Map>) page.getList(),"test","test.xls",response);
     }
-
-    /**
-     * 编辑
-     * @param jsonObject
-     * @return
-     */
-    @PutMapping("/edit")
-    public String edit(@RequestBody JSONObject jsonObject){
-        try {
-            EmployeeEntity employee =JSONObject.toJavaObject(jsonObject,EmployeeEntity.class);
-            employeeService.updateById(employee);
-        }catch (Exception e){
-            return "编辑失败";
-        }
-        return "编辑成功";
-    }
-
-    /**
-     * 批量删除
-     * @param jsonArray
-     * @return
-     */
-    @DeleteMapping("/batchDelete")
-    @Transactional  //批量处理数据，使用事务管理
-    public String batchDelete(@RequestBody JSONArray jsonArray) {
-        List<String> list=jsonArray.toJavaList(String.class);
-        String str="删除成功";
-        try {
-            employeeService.removeByIds(list);
-        }catch (Exception e){
-            str=e.getMessage();
-        }
-        return str;
-    }
-
-    /**
-     * 删除
-     * @param eno
-     * @return
-     */
-    @DeleteMapping("/delete")
-    public String delete(@RequestParam("eno") String eno) {
-        String str="删除成功";
-        try {
-            employeeService.removeById(eno);
-        }catch (Exception e){
-            str=e.getMessage();
-        }
-        return str;
-    }
-
-    /**
-     * 添加
-     * @param jsonObject
-     * @return
-     */
-    @PostMapping("/add")
-    public String add(@RequestBody JSONObject jsonObject) {
-        EmployeeEntity employeeEntity=JSONObject.toJavaObject(jsonObject,EmployeeEntity.class);
-        employeeService.save(employeeEntity);
-        return "添加成功";
-    }
-
     /**
      * 老的分页方法
      * @param curr
