@@ -1,18 +1,14 @@
 package com.sql.ehr.configuration;
 import io.jsonwebtoken.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
- * @author Bxsheng
- * @blogAddress www.kdream.cn
- * @createTIme 2020/9/16
- * since JDK 1.8
+ * token设置类
  */
 @Component
 public class JwtTokenUtils {
@@ -158,9 +154,9 @@ public class JwtTokenUtils {
         return refreshedToken;
     }
 
-    //TODO,验证当前的token是否有效
+    //TODO,验证当前的token是否有效（判断token是否包含用户名及token是否失效）
     public Boolean validateToken(String token, UserDetails userDetails) {
-        JwtUser user = (JwtUser) userDetails;
+        JwtUser user = new JwtUser(userDetails.getUsername(),userDetails.getPassword(),new ArrayList<GrantedAuthority>(userDetails.getAuthorities()) );
         final String username = getUsernameFromToken(token);
         final Date created = getCreatedDateFromToken(token);
         return (username.equals(user.getUsername())&& !isTokenExpired(token));

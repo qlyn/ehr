@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SpringSecurity用户角色关联数据类
+ */
 @Service
 public class CustomUserService implements UserDetailsService { //自定义UserDetailsService 接口
 
@@ -21,6 +24,7 @@ public class CustomUserService implements UserDetailsService { //自定义UserDe
     EmployeeDao employeeDao;
     @Autowired
     Employee_RoleServiceDao employee_roleServiceDao;
+    //loadUserByUsername方法将数据库用户角色权限添加至SpringSecurity中
     @Override
     public UserDetails loadUserByUsername(String username) { //重写loadUserByUsername 方法获得 userdetails 类型用户
 

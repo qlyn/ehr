@@ -38,8 +38,8 @@ public class GetDataController {
         map.put("message","成功访问");
         return map.toString();
     }
-
-    @PreAuthorize("hasAuthority('admin')")
+    //需要admin用户才能访问的接口，为什么加上ROLE_：因为SpringSecurity里的角色都需要加上该前缀，CustomUserService里的同理也需要加上该前缀。
+    @PreAuthorize("hasAuthority('ROLE_admin')")
     @RequestMapping("/del")
     public String del(){
         return "删除成功";

@@ -7,10 +7,12 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 @SpringBootApplication
 @MapperScan("com.sql.ehr.dao")
 @EnableCaching
+@EnableGlobalMethodSecurity(prePostEnabled = true) // 开启方法级安全验证
 public class EhrApplication {
 
     public static void main(String[] args) {

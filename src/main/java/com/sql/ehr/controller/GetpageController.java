@@ -1,16 +1,11 @@
 package com.sql.ehr.controller;
 
-import com.sql.ehr.configuration.SecurityConstant;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
 import java.util.HashMap;
 
 @Controller  //String需要返回静态页面时，必须用@Controller，而不是@RestController

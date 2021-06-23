@@ -6,7 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-
+/**抽象出来的用户及拥有权限类（JwtTokenUtils里有使用）
+    作用：
+    1、可以存数据库里的账户、密码、以及拥有的权限（UserDetails取得后存入（UserDetails由CustomUserService.loadUserByUsername方法返回））
+    2、可以存token里的账户、密码、以及拥有权限
+ */
 @Data
 public class JwtUser implements UserDetails {   //实现UserDeails接口
     //用户名

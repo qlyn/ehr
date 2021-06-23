@@ -5,6 +5,7 @@ import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+//token设置类 ：属性与application.yml里的设置一一对应
 @Data
 @ToString
 @Configuration

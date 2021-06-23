@@ -1,5 +1,6 @@
 package com.sql.ehr.configuration;
 
+import com.sql.ehr.service.impl.CustomUserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,33 +16,42 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Token认证过滤器：会拦截所有请求
+ */
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+    //自定义用户角色关联数据类
     @Resource
-    private UserDetailsService userDetailsService;
-
+    private CustomUserService userDetailsService;
+    //token工具类
     @Resource
     private JwtTokenUtils jwtTokenUtil;
-
+    //token设置类
     @Resource
     private JwtProperties jwtProperties;
 
 
-
+    /**
+     * 请求拦截方法：任何请求（包括SecurityConfig的token获取请求）都会被其拦截
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param filterChain
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         //如果在前端测试时出现跨域问题，到收藏的博客里面看一看
 
         String requestUrl = httpServletRequest.getRequestURI();
-
+        //从请求头里取出token
         String authToken = httpServletRequest.getHeader(jwtProperties.getHeader());
-
+        //从token取出用户名
         String stuId = jwtTokenUtil.getUsernameFromToken(authToken);
 
 
-        System.out.println("进入自定义过滤器");
-
-        System.out.println("自定义过滤器获得用户名为   "+stuId);
+        System.out.println("进入自定义过滤器，自定义过滤器获得用户名为   "+stuId);
 
         //当token中的username不为空时进行验证token是否是有效的token
         if (stuId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
