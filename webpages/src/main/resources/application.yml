@@ -1,0 +1,36 @@
+server:
+  port: 8282
+spring:
+  application:
+    name: ehr-webpages
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.145.1:8848
+  #当出现相同名字的类进行注册时，准许覆盖注册
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ehr?useUnicode=true&allowMultiQueries=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    username: root
+    password: 123456
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  mapper-locations: classpath:mapper/**/*.xml
+
+#  security:
+#    #   登陆路径
+#    login-url: /login
+#    #    登出路径
+#    logout-url: /logout
+#    #    免认证静态资源路径
+#    anon-resources-url: /css/**,/js/**,/skin/**,/images/**,/font/**,/fonts/**,/dist/**
+#    #    放行路径
+#    release-url: /login
+#    # 记住我超时时间
+#    remember-me-timeout: 300
+#    # 对应登录页面 form表单的 action属性
+#    login-processing-url: /authentication/form

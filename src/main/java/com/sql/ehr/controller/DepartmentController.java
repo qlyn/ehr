@@ -1,24 +1,15 @@
 package com.sql.ehr.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-
 import com.alibaba.fastjson.JSONObject;
-import com.sql.ehr.core.bean.PageVo;
-import com.sql.ehr.core.bean.QueryCondition;
-import com.sql.ehr.core.bean.Resp;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import com.sql.ehr.entity.DepartmentEntity;
 import com.sql.ehr.service.DepartmentService;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 

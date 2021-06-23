@@ -6,23 +6,22 @@ import com.sql.ehr.core.bean.PageVo;
 import com.sql.ehr.core.bean.QueryCondition;
 import com.sql.ehr.core.bean.Resp;
 import com.sql.ehr.entity.EmployeeEntity;
+import com.sql.ehr.entity.PermissionEntity;
+import com.sql.ehr.entity.RoleEntity;
 import com.sql.ehr.service.EmployeeService;
-import com.sql.ehr.util.ExcelTools;
-import com.sql.ehr.util.RedisTools;
-import com.sql.ehr.util.RequestParamsTools;
+import com.sql.ehr.service.Employee_RoleService;
+import com.sql.ehr.service.PermissionService;
+import com.sql.ehr.service.Role_PermissionService;
+import com.sql.ehr.util.*;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -43,6 +42,82 @@ public class EmployeeController {
     @Autowired
     RedisTools redisTools;
 
+    @Autowired
+    private Employee_RoleService employee_roleService;
+    @Autowired
+    private Role_PermissionService role_permissionService;
+
+    @Autowired
+    PermissionService permissionService;
+    @Autowired
+    MenuTools menuTools;
+
+    /**
+     * 根据用户查询所拥有角色
+     * @param request
+     * @return
+     */
+    @GetMapping("/selectRoleByEno")
+    public String selectRoleByEno(HttpServletRequest request) {
+        System.out.println("eno:"+request.getParameter("eno"));
+        return JSONObjectTools.objectToJSONOString(employee_roleService.selectRoleidByEno(request.getParameter("eno")));
+    }
+    @GetMapping("/selectRoleListByEno")
+    public List<RoleEntity> selectRoleListByEno(@RequestParam HashMap<String,Object> map) {
+        return employee_roleService.selectRoleidByEno((String)map.get("eno"));
+    }
+
+    /**
+     * 通过用户名查询账户
+     * @param account
+     * @return
+     */
+    @GetMapping("/selectByAccount")
+    public EmployeeEntity selectByAccount(String account) {
+        return employeeService.selectByAccount(account);
+    }
+    /**
+     * 通过用户id查询菜单
+     * @param map
+     * @return
+     */
+    @GetMapping("/selectMenuByEno")
+    public Map<String, Object> selectMenuByEno(@RequestParam HashMap<String,Object> map){
+
+
+        List<RoleEntity> roleList=employee_roleService.selectRoleidByEno((String) map.get("eno"));
+        List permissionList=new LinkedList();
+        for(RoleEntity role:roleList){
+            permissionList.addAll(role_permissionService.selectPermissionByRoleid(role.getRoleid()));
+        }
+
+        return menuTools.createMenu(permissionList);
+    }
+
+    /**
+     * 根据角色查询所拥有权限
+     * @param request
+     * @return
+     */
+    @GetMapping("/selectPermissionByRoleid")
+    public String selectPermissionByRoleid(HttpServletRequest request){
+        return JSONObjectTools.objectToJSONOString(role_permissionService.selectPermissionByRoleid(request.getParameter("roleid")));
+    }
+
+    /**
+     * 根据用户查询所拥有的权限（先查相关用户，用户再查相关联的权限）
+     * @param request
+     * @return
+     */
+    @GetMapping("/selectPermissionByEno")
+    public String selectPermissionByEno(HttpServletRequest request){
+        List<RoleEntity> roleList=employee_roleService.selectRoleidByEno(request.getParameter("eno"));
+        List permissionList=new LinkedList();
+        for(RoleEntity role:roleList){
+            permissionList.addAll(role_permissionService.selectPermissionByRoleid(role.getRoleid()));
+        }
+        return JSONObjectTools.objectToJSONOString(permissionList);
+    }
     /**
      * 分页查询（根据传来的分页参数进行的分页查询）
      * @param queryCondition

@@ -33,6 +33,8 @@ public interface EmployeeService extends IService<EmployeeEntity> {
 
     PageVo selectAllByCondition(HashMap<String,Object> map);
 
+    public EmployeeEntity selectByAccount(String account);
+
 //    PageVo selectAllByCondition(String ename, String egender, String edno, String epno,QueryCondition queryCondition);
 
 }

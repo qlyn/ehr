@@ -40,6 +40,9 @@ public interface EmployeeDao extends BaseMapper<EmployeeEntity> {
             "and ename like #{ename} and egender like #{egender} and edno like #{edno} and epno like #{epno} order by e.eno;")
     List<GeneralEmployee> selectAllByCondition(HashMap<String,Object> map);
 
+    @Select("SELECT * FROM employee e where e.eaccount=#{account}")
+    public EmployeeEntity selectByAccount(String account);
+
 //    @Select("SELECT e.*,dname,p.pname FROM employee e,department d,post p where e.edno=d.dno and e.epno=p.pno " +
 //            "and ename like #{ename} and egender like #{egender} and edno like #{edno} and epno like #{epno} order by e.eno;")
 //    List<GeneralEmployee> selectAllByCondition(String ename, String egender, String edno, String epno);

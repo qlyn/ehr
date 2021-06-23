@@ -59,6 +59,16 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeDao, EmployeeEntity
     }
 
     /**
+     * 根据用户名查询Employee信息
+     * @param account
+     * @return
+     */
+    @Override
+    public EmployeeEntity selectByAccount(String account) {
+        return employeeDao.selectByAccount(account);
+    }
+
+    /**
      * 导出查询，删除不必要的记录并返回
      * @param map
      * @return

@@ -1,20 +1,16 @@
 package com.sql.ehr.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
 import com.sql.ehr.core.bean.PageVo;
 import com.sql.ehr.core.bean.QueryCondition;
 import com.sql.ehr.core.bean.Resp;
+import com.sql.ehr.entity.TrainprojectEntity;
+import com.sql.ehr.service.TrainprojectService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.sql.ehr.entity.TrainprojectEntity;
-import com.sql.ehr.service.TrainprojectService;
+import java.util.Arrays;
 
 
 
@@ -38,7 +34,6 @@ public class TrainprojectController {
      */
     @ApiOperation("分页查询(排序)")
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('ehr:trainproject:list')")
     public Resp<PageVo> list(QueryCondition queryCondition) {
         PageVo page = trainprojectService.queryPage(queryCondition);
 
@@ -51,7 +46,6 @@ public class TrainprojectController {
      */
     @ApiOperation("详情查询")
     @GetMapping("/info/{tpno}")
-    @PreAuthorize("hasAuthority('ehr:trainproject:info')")
     public Resp<TrainprojectEntity> info(@PathVariable("tpno") String tpno){
 		TrainprojectEntity trainproject = trainprojectService.getById(tpno);
 
@@ -63,7 +57,6 @@ public class TrainprojectController {
      */
     @ApiOperation("保存")
     @PostMapping("/save")
-    @PreAuthorize("hasAuthority('ehr:trainproject:save')")
     public Resp<Object> save(@RequestBody TrainprojectEntity trainproject){
 		trainprojectService.save(trainproject);
 
@@ -75,7 +68,6 @@ public class TrainprojectController {
      */
     @ApiOperation("修改")
     @PostMapping("/update")
-    @PreAuthorize("hasAuthority('ehr:trainproject:update')")
     public Resp<Object> update(@RequestBody TrainprojectEntity trainproject){
 		trainprojectService.updateById(trainproject);
 
@@ -87,7 +79,6 @@ public class TrainprojectController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority('ehr:trainproject:delete')")
     public Resp<Object> delete(@RequestBody String[] tpnos){
 		trainprojectService.removeByIds(Arrays.asList(tpnos));
 

@@ -1,20 +1,16 @@
 package com.sql.ehr.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-
 import com.sql.ehr.core.bean.PageVo;
 import com.sql.ehr.core.bean.QueryCondition;
 import com.sql.ehr.core.bean.Resp;
+import com.sql.ehr.entity.ApplyEntity;
+import com.sql.ehr.service.ApplyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.sql.ehr.entity.ApplyEntity;
-import com.sql.ehr.service.ApplyService;
+import java.util.Arrays;
 
 
 
@@ -38,7 +34,6 @@ public class ApplyController {
      */
     @ApiOperation("分页查询(排序)")
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('ehr:apply:list')")
     public Resp<PageVo> list(QueryCondition queryCondition) {
         PageVo page = applyService.queryPage(queryCondition);
 
@@ -51,7 +46,6 @@ public class ApplyController {
      */
     @ApiOperation("详情查询")
     @GetMapping("/info/{ano}")
-    @PreAuthorize("hasAuthority('ehr:apply:info')")
     public Resp<ApplyEntity> info(@PathVariable("ano") String ano){
 		ApplyEntity apply = applyService.getById(ano);
 
@@ -63,7 +57,6 @@ public class ApplyController {
      */
     @ApiOperation("保存")
     @PostMapping("/save")
-    @PreAuthorize("hasAuthority('ehr:apply:save')")
     public Resp<Object> save(@RequestBody ApplyEntity apply){
 		applyService.save(apply);
 
@@ -75,7 +68,6 @@ public class ApplyController {
      */
     @ApiOperation("修改")
     @PostMapping("/update")
-    @PreAuthorize("hasAuthority('ehr:apply:update')")
     public Resp<Object> update(@RequestBody ApplyEntity apply){
 		applyService.updateById(apply);
 
@@ -87,7 +79,6 @@ public class ApplyController {
      */
     @ApiOperation("删除")
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority('ehr:apply:delete')")
     public Resp<Object> delete(@RequestBody String[] anos){
 		applyService.removeByIds(Arrays.asList(anos));
 
