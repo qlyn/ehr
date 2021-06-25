@@ -60,11 +60,11 @@ public class EmployeeController {
     @GetMapping("/selectRoleByEno")
     public String selectRoleByEno(HttpServletRequest request) {
         System.out.println("eno:"+request.getParameter("eno"));
-        return JSONObjectTools.objectToJSONOString(employee_roleService.selectRoleidByEno(request.getParameter("eno")));
+        return JSONObjectTools.objectToJSONOString(employee_roleService.selectRoleListByEno(request.getParameter("eno")));
     }
     @GetMapping("/selectRoleListByEno")
     public List<RoleEntity> selectRoleListByEno(@RequestParam HashMap<String,Object> map) {
-        return employee_roleService.selectRoleidByEno((String)map.get("eno"));
+        return employee_roleService.selectRoleListByEno((String)map.get("eno"));
     }
 
     /**
@@ -85,7 +85,7 @@ public class EmployeeController {
     public Map<String, Object> selectMenuByEno(@RequestParam HashMap<String,Object> map){
 
 
-        List<RoleEntity> roleList=employee_roleService.selectRoleidByEno((String) map.get("eno"));
+        List<RoleEntity> roleList=employee_roleService.selectRoleListByEno((String) map.get("eno"));
         List permissionList=new LinkedList();
         for(RoleEntity role:roleList){
             permissionList.addAll(role_permissionService.selectPermissionByRoleid(role.getRoleid()));
@@ -94,6 +94,23 @@ public class EmployeeController {
         return menuTools.createMenu(permissionList);
     }
 
+    /**
+     * 通过用户用户名查询菜单
+     * @param map
+     * @return
+     */
+    @GetMapping("/selectMenuByEaccount")
+    public Map<String, Object> selectMenuByEaccount(@RequestParam HashMap<String,Object> map){
+
+
+        List<RoleEntity> roleList=employee_roleService.selectRoleListByEaccount((String) map.get("eaccount"));
+        List permissionList=new LinkedList();
+        for(RoleEntity role:roleList){
+            permissionList.addAll(role_permissionService.selectPermissionByRoleid(role.getRoleid()));
+        }
+
+        return menuTools.createMenu(permissionList);
+    }
     /**
      * 根据角色查询所拥有权限
      * @param request
@@ -111,7 +128,7 @@ public class EmployeeController {
      */
     @GetMapping("/selectPermissionByEno")
     public String selectPermissionByEno(HttpServletRequest request){
-        List<RoleEntity> roleList=employee_roleService.selectRoleidByEno(request.getParameter("eno"));
+        List<RoleEntity> roleList=employee_roleService.selectRoleListByEno(request.getParameter("eno"));
         List permissionList=new LinkedList();
         for(RoleEntity role:roleList){
             permissionList.addAll(role_permissionService.selectPermissionByRoleid(role.getRoleid()));
@@ -125,16 +142,18 @@ public class EmployeeController {
      */
     //查询操作：判断key是否存在，如果存在则直接返回数据即不作任何操作；如果不存在则到数据库查询并存入redis，再从redis里取数据
     @GetMapping("/selectAllByPage")
-    public JSONObject selectAllByPage(QueryCondition queryCondition) {
+    public Resp<PageVo> selectAllByPage(QueryCondition queryCondition) {
         //使用当前类名：方法名作为key
-        String className=Thread.currentThread().getStackTrace()[1].getClassName();
-        String methodName=Thread.currentThread().getStackTrace()[1].getMethodName();
-        String key=className+":"+methodName;
-        if(!redisTools.redisTemplate.hasKey(key)){
+//        String className=Thread.currentThread().getStackTrace()[1].getClassName();
+//        String methodName=Thread.currentThread().getStackTrace()[1].getMethodName();
+//        String key=className+":"+methodName;
+//        if(!redisTools.redisTemplate.hasKey(key)){
+//            PageVo page = employeeService.selectAllByPage(queryCondition);
+//            redisTools.set(key,Resp.customize(page,200,""));
+//        }
+//        return redisTools.get(key);
             PageVo page = employeeService.selectAllByPage(queryCondition);
-            redisTools.set(key,Resp.customize(page,200,""));
-        }
-        return redisTools.get(key);
+            return Resp.customize(page,200,"");
     }
 
     /**

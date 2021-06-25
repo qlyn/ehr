@@ -13,6 +13,8 @@ import java.util.List;
 public interface Employee_RoleServiceDao {
 
     @Select("SELECT r.* FROM role r,employee_role er where er.roleid=r.roleid and er.eno=#{eno};")
-    public List<RoleEntity> selectRoleidByEno(String eno);
+    public List<RoleEntity> selectRoleListByEno(String eno);
+    @Select("SELECT r.* FROM role r,employee_role er where er.roleid=r.roleid and er.eno=(select eno from employee where eaccount=#{eaccount});")
+    public List<RoleEntity> selectRoleListByEaccount(String eaccount);
 
 }

@@ -11,5 +11,11 @@ public interface Employee_RoleService {
      * @param eno
      * @return
      */
-    public List<RoleEntity> selectRoleidByEno(String eno);
+    public List<RoleEntity> selectRoleListByEno(String eno);
+    /**
+     * 根据用户用户名查的所拥有的角色
+     * @param eaccount
+     * @return
+     */
+    public List<RoleEntity> selectRoleListByEaccount(String eaccount);
 }

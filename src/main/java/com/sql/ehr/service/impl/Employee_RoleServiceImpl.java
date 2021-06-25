@@ -15,7 +15,13 @@ public class Employee_RoleServiceImpl implements Employee_RoleService {
     Employee_RoleServiceDao employee_roleServiceDao;
 
     @Override
-    public List<RoleEntity> selectRoleidByEno(String eno) {
-        return employee_roleServiceDao.selectRoleidByEno(eno);
+    public List<RoleEntity> selectRoleListByEno(String eno) {
+        return employee_roleServiceDao.selectRoleListByEno(eno);
     }
+
+    @Override
+    public List<RoleEntity> selectRoleListByEaccount(String eaccount) {
+        return employee_roleServiceDao.selectRoleListByEaccount(eaccount);
+    }
+
 }

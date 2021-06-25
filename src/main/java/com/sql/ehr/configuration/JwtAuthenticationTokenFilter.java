@@ -47,6 +47,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String requestUrl = httpServletRequest.getRequestURI();
         //从请求头里取出token
         String authToken = httpServletRequest.getHeader(jwtProperties.getHeader());
+        if(authToken==null||authToken.equals("")){  //导出的表格使用<form>表格模式，无法添加header请求头
+            authToken=httpServletRequest.getParameter(jwtProperties.getHeader());
+        }
         //从token取出用户名
         String stuId = jwtTokenUtil.getUsernameFromToken(authToken);
 

@@ -34,7 +34,7 @@ public class CustomUserService implements UserDetailsService { //自定义UserDe
         }
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         //用于添加用户的权限。只要把用户权限添加到authorities 就万事大吉。
-        for(RoleEntity role : employee_roleServiceDao.selectRoleidByEno(employee.getEno()))
+        for(RoleEntity role : employee_roleServiceDao.selectRoleListByEno(employee.getEno()))
         {
             authorities.add(new SimpleGrantedAuthority("ROLE_"+role.getRolename()));//注意：权限要加上"ROLE_"，SpringSecurity规定，或者在数据库中就加上"ROLE_"
         }
