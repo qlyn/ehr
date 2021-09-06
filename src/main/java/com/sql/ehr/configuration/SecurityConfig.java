@@ -80,6 +80,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/login").permitAll()  //放行login接口
+                .antMatchers("/register").permitAll()  //放行register接口
+                .antMatchers("/getRegisterCode").permitAll()  //放行getRegisterCode接口
                 //配置允许匿名访问的路径
                 .anyRequest().authenticated();
         // 解决跨域问题（重要）  只有在前端请求接口时才发现需要这个

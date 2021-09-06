@@ -1,0 +1,72 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: ehr-email
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.208.1:8848  #nacos地址及端口
+  mail:
+    username: 1392825484@qq.com
+    password: wnnxhkfnwymjhjej
+    host: smtp.qq.com
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+            required: true
+    default-encoding: UTF-8
+  kafka:
+    #集群设置
+    bootstrap-servers: 127.0.0.1:9092  #逗号分隔追加ip:端口号即可添加集群
+    #生产设置
+    producer:
+      retries: 0        # 重试次数
+      acks: 1           # 应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
+      batch-size: 16384 # 批量大小
+      properties:
+        linger:
+          ms: 0          # 提交延时
+          # 当生产端积累的消息达到batch-size或接收到消息linger.ms后,生产者就会将消息提交给kafka
+          # linger.ms为0表示每接收到一条消息就提交给kafka,这时候batch-size其实就没用了
+      buffer-memory: 33554432 # 生产端缓冲区大小
+      # Kafka提供的序列化和反序列化类
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #partitioner: # 自定义分区器
+      #  class: com.felix.kafka.producer.CustomizePartitioner
+
+    #消费设置
+    consumer:
+      properties:
+        group:
+          id: defaultConsumerGroup  # 默认的消费组ID
+        session:
+          timeout:
+            ms: 120000            # 消费会话超时时间(超过这个时间consumer没有发送心跳,就会触发rebalance操作)
+        request:
+          timeout:
+            ms: 180000             # 消费请求超时时间
+      enable-auto-commit: true     # 是否自动提交offset
+      auto:
+        commit:
+          interval:
+            ms: 1000           # 提交offset延时(接收到消息后多久提交offset)
+      #max-poll-records: 50     # 批量消费每次最多消费多少条消息
+
+      # 当kafka中没有初始offset或offset超出范围时将自动重置offset
+      # earliest:重置为分区中最小的offset;
+      # latest:重置为分区中最新的offset(消费分区中新产生的数据);
+      # none:只要有一个分区不存在已提交的offset,就抛出异常;
+      auto-offset-reset: latest
+      # Kafka提供的序列化和反序列化类
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+    #消费监听设置
+    listener:
+      missing-topics-fatal: false # 消费端监听的topic不存在时，项目启动会报错(关掉)
+      #type: batch                 # 设置批量消费

@@ -1,6 +1,7 @@
 package com.sql.ehr.controller;
 
 import com.sql.ehr.configuration.JwtTokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,9 +11,30 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class GetDataController {
+    @Autowired
+    HolisticController holisticController;
+    //获取注册时邮箱验证码
+    @GetMapping("/getRegisterCode")
+    public String getRegisterCode(@RequestParam HashMap<String,Object> map){
+        System.out.println(map);
+        //生成随机六位注册码
+        String sources = "0123456789"; // 加上一些字母，就可以生成pc站的验证码了
+        Random rand = new Random();
+        StringBuffer registerCode = new StringBuffer();
+        for (int i = 0; i < 6; i++)
+        {
+            registerCode.append(sources.charAt(rand.nextInt(9)) + "");
+        }
+        map.put("registerCode",registerCode);
+        holisticController.sendEmail(map);
+        return (String) map.get("eemail");
+    }
+
     //所有用户可访问的接口
     @GetMapping("/hello")
     public String hello() {
