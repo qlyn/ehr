@@ -94,7 +94,7 @@
         </dependency>
         <dependency>
             <groupId>com.sql</groupId>
-            <artifactId>ehr</artifactId>
+            <artifactId>ehr-local</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

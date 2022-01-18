@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,9 +24,7 @@ public class HolisticController {
     @GetMapping("/sendEmail")
     public void sendEmail(@RequestParam HashMap<String,Object> map){
         ConcurrentHashMap currentMap=new ConcurrentHashMap(map);
-        System.out.println("currentMap:"+currentMap.toString());
-        System.out.println("JSON.toJSON(currentMap).toString():"+JSON.toJSON(currentMap).toString());
-        kafkaTemplate.send("test", JSON.toJSON(currentMap).toString()).addCallback(success -> {
+        kafkaTemplate.send("test", JSON.toJSON(currentMap).toString()).addCallback(success  -> {
             // 消息发送到的topic
             String topic = success.getRecordMetadata().topic();
             // 消息发送到的分区
@@ -36,7 +35,6 @@ public class HolisticController {
         }, failure -> {
             System.out.println("发送消息失败:" + failure.getMessage());
         });
-        System.out.printf("调用sendEmail方法");
     }
     @Autowired
     MailTool mailTool;
@@ -51,6 +49,9 @@ public class HolisticController {
         ConcurrentHashMap map=JSON.parseObject(record.value().toString(), ConcurrentHashMap.class);
         System.out.println("ConcurrentHashMap:"+map);
         System.out.println("fromMail:"+fromMail);
-        mailTool.sendSimpleMail("ehr系统注册码","您的注册码已生产，请完成激活："+map.get("registerCode").toString(),fromMail ,map.get("eemail").toString());
+        mailTool.sendSimpleMail("ehr系统注册码","您的注册码已生产，请完成激活："+map.get("registerCode").toString().trim()+"<br /> link:"+
+                        "http://127.0.0.1:8020/layuimini/content/register.html?registerCode="+map.get("registerCode").toString().trim()+"&eemail="+
+                        map.get("eemail").toString().trim()+"&eaccount="+map.get("eaccount").toString().trim()+"&epassword="+map.get("epassword").toString().trim()
+                ,fromMail ,map.get("eemail").toString());
     }
 }

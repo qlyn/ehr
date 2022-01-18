@@ -1,9 +1,6 @@
 /**
- * Copyright (c) 2018 谷粒开源 All rights reserved.
+ * Copyright (c) 2018 生成开源 All rights reserved.
  *
- * https://www.guli.cloud
- *
- * 版权所有，侵权必究！
  */
 
 package com.sql.generator.controller;
@@ -53,7 +50,7 @@ public class SysGeneratorController {
 		byte[] data = sysGeneratorService.generatorCode(tables.split(","));
 		
 		response.reset();  
-        response.setHeader("Content-Disposition", "attachment; filename=\"guli.zip\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"code.zip\"");
         response.addHeader("Content-Length", "" + data.length);  
         response.setContentType("application/octet-stream; charset=UTF-8");  
   

@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("io.guli.dao")
+@MapperScan("com.sql.generator.dao")
 public class GeneratorApplication {
 
     public static void main(String[] args) {

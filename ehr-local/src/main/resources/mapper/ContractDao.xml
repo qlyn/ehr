@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sql.ehr.local.dao.ContractDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.sql.ehr.local.entity.ContractEntity" id="contractMap">
+        <result property="cno" column="cno"/>
+        <result property="employeeEno" column="employee_eno"/>
+        <result property="cbeigntime" column="cbeigntime"/>
+        <result property="cendtime" column="cendtime"/>
+        <result property="postPno" column="post_pno"/>
+        <result property="ccontent" column="ccontent"/>
+        <result property="cremarks" column="cremarks"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateUser" column="update_user"/>
+    </resultMap>
+
+
+</mapper>

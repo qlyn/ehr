@@ -1,16 +1,12 @@
 /**
- * Copyright (c) 2018 谷粒开源 All rights reserved.
+ * Copyright (c) 2018 生成开源 All rights reserved.
  *
- * https://www.guli.cloud
- *
- * 版权所有，侵权必究！
  */
 
 package com.sql.generator.config;
 
 import com.sql.generator.dao.*;
 import com.sql.generator.utils.RRException;
-import com.sql.generator.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +20,7 @@ import org.springframework.context.annotation.Primary;
  */
 @Configuration
 public class DbConfig {
-    @Value("${guli.database: mysql}")
+    @Value("${sql.database: mysql}")
     private String database;
     @Autowired
     private MySQLGeneratorDao mySQLGeneratorDao;
